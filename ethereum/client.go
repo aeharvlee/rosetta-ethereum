@@ -222,6 +222,10 @@ func (ec *Client) Transaction(
 	}
 
 	var raw json.RawMessage
+	// Geth js call tracer parse failed internal call (caused by failed CREATE opcode),
+	// but js call tracer of rosetta-ethereum does not work well.
+	legacyTracer := "callTracerLegacy"
+	ec.tc.Tracer = &legacyTracer
 	err := ec.c.CallContext(ctx, &raw, "eth_getTransactionByHash", transactionIdentifier.Hash)
 	if err != nil {
 		return nil, fmt.Errorf("%w: transaction fetch failed", err)
